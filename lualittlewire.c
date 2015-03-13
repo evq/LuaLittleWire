@@ -311,6 +311,24 @@ static int l_ws2812_preload(lua_State *L) {
   return return_error(L);
 }
 
+static int l_dht_read(lua_State *L) {
+  struct littleWire* lw_dev = lua_touserdata(L, 1);  
+  unsigned char type = lua_tonumber(L, 2);
+  dht_reading val = dht_read(lw_dev, type);
+  if (check_error(L)) {
+    return 2;
+  } else {
+    if (!val.error) {
+      lua_pushnumber(L, val.humid);
+      lua_pushnumber(L, val.temp);
+    } else {
+      lua_pushnil(L);
+      lua_pushstring(L, "DHT Read Error");
+    }
+    return 2;
+  }
+}
+
 static const luaL_Reg littlewire [] = {
   {"delay", l_delay},
   {"search", l_littlewire_search},
@@ -344,6 +362,7 @@ static const luaL_Reg littlewire [] = {
   {"ws2812_write", l_ws2812_write},
   {"ws2812_flush", l_ws2812_flush},
   {"ws2812_preload", l_ws2812_preload},
+  {"dht_read", l_dht_read},
   {NULL, NULL}
 };
 
@@ -396,6 +415,9 @@ LUALIB_API int luaopen_littlewire(lua_State *L) {
   new_glob(L, MISO_PIN, "MISO_PIN");
   new_glob(L, MOSI_PIN, "MOSI_PIN");
   new_glob(L, RESET_PIN, "RESET_PIN");
+
+  new_glob(L, DHT11, "DHT11");
+  new_glob(L, DHT22, "DHT22");
 
   return 1;
 }
