@@ -285,6 +285,23 @@ static int l_softPWM_write(lua_State *L) {
   return return_error(L);
 }
 
+static int l_quadPWM_state(lua_State *L) {
+  struct littleWire* lw_dev = lua_touserdata(L, 1);  
+  unsigned char state = lua_tonumber(L, 2);
+  quadPWM_state(lw_dev, state);
+  return return_error(L);
+}
+
+static int l_quadPWM_write(lua_State *L) {
+  struct littleWire* lw_dev = lua_touserdata(L, 1);  
+  unsigned char ch1 = lua_tonumber(L, 2);
+  unsigned char ch2 = lua_tonumber(L, 3);
+  unsigned char ch3 = lua_tonumber(L, 4);
+  unsigned char ch4 = lua_tonumber(L, 5);
+  quadPWM_write(lw_dev, ch1, ch2, ch3, ch4);
+  return return_error(L);
+}
+
 static int l_ws2812_write(lua_State *L) {
   struct littleWire* lw_dev = lua_touserdata(L, 1);  
   unsigned char pin = lua_tonumber(L, 2);
@@ -359,6 +376,8 @@ static const luaL_Reg littlewire [] = {
   {"i2c_updateDelay", l_i2c_updateDelay},
   {"softPWM_state", l_softPWM_state},
   {"softPWM_write", l_softPWM_write},
+  {"quadPWM_state", l_quadPWM_state},
+  {"quadPWM_write", l_quadPWM_write},
   {"ws2812_write", l_ws2812_write},
   {"ws2812_flush", l_ws2812_flush},
   {"ws2812_preload", l_ws2812_preload},
